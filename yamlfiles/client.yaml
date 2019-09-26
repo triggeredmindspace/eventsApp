@@ -1,0 +1,26 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+        #creationTimestamp: null
+  labels:
+    run: client
+  name: client
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      run: client
+  strategy: {}
+  template:
+    metadata:
+            # creationTimestamp: null
+      labels:
+        run: client 
+    spec:
+      containers:
+      - env:
+        - name: SERVER
+          value: "http://server-lb:8082"
+        image: gcr.io/first-tide-253916/client:v0.1
+        name: client     
+status: {}
