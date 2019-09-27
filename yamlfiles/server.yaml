@@ -18,7 +18,7 @@ spec:
         run: server
     spec:
       containers:
-      - image: gcr.io/first-tide-253916/server:BUILDNUMBER
+      - image: gcr.io/first-tide-253916/server:vBUILDNUMBER
         name: server
         resources: {}
 status: {}
