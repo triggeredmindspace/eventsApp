@@ -21,6 +21,6 @@ spec:
       - env:
         - name: SERVER
           value: "http://server-lb:8082"
-        image: gcr.io/first-tide-253916/client:BUILDNUMBER
+        image: gcr.io/first-tide-253916/client:vBUILDNUMBER
         name: client     
 status: {}
