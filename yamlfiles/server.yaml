@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   creationTimestamp: null
@@ -18,7 +18,7 @@ spec:
         run: server
     spec:
       containers:
-      - image: gcr.io/first-tide-253916/server:v0.1
+      - image: gcr.io/first-tide-253916/server:BUILDNUMBER
         name: server
         resources: {}
 status: {}
