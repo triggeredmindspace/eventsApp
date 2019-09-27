@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
         #creationTimestamp: null
@@ -21,6 +21,6 @@ spec:
       - env:
         - name: SERVER
           value: "http://server-lb:8082"
-        image: gcr.io/first-tide-253916/client:v0.1
+        image: gcr.io/first-tide-253916/client:BUILDNUMBER
         name: client     
 status: {}
