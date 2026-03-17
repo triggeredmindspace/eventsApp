@@ -11,15 +11,19 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "chai": "^4.2.0",
-    "mocha": "^6.2.0",
-    "nock": "^10.0.6",
-    "supertest": "^4.0.2"
+    "chai": "^4.5.0",
+    "mocha": "^11.0.0",
+    "nock": "^13.5.6",
+    "supertest": "^7.0.0"
   },
   "dependencies": {
-    "body-parser": "^1.19.0",
-    "express": "^4.17.1",
-    "express-handlebars": "^3.1.0",
-    "request": "^2.88.0"
+    "axios": "^1.7.9",
+    "body-parser": "^1.20.3",
+    "express": "^4.21.2",
+    "express-handlebars": "^8.0.0"
+  },
+  "overrides": {
+    "diff": "^8.0.3",
+    "serialize-javascript": "^7.0.4"
   }
 }

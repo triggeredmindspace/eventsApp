@@ -8,27 +8,27 @@ const express = require('express');
 // https://www.npmjs.com/package/body-parser
 const bodyParser = require('body-parser');
 
-// express-handlebars is a templating library 
+// express-handlebars is a templating library
 // https://www.npmjs.com/package/express-handlebars
 // - look inside the views folder for the templates
 // data is inserted into a template inside {{ }}
-const hbs = require('express-handlebars');
+const { engine } = require('express-handlebars');
 
-// request is used to make REST calls to the backend microservice
-// details here: https://www.npmjs.com/package/request
-var request = require('request');
+// axios is used to make REST calls to the backend microservice
+// details here: https://www.npmjs.com/package/axios
+const axios = require('axios');
 
 // create the server
 const app = express();
 
-// set up handlbars as the templating engine
+// set up handlebars as the templating engine
 app.set('view engine', 'hbs');
-app.engine('hbs', hbs({
-    extname: 'hbs',
-    defaultView: 'default'
+app.engine('hbs', engine({
+    extname: '.hbs',
+    defaultLayout: 'default'
 }));
 
-// set up the parser to get the contents of data from html forms 
+// set up the parser to get the contents of data from html forms
 // this would be used in a POST to the server as follows:
 // app.post('/route', urlencodedParser, (req, res) => {}
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
@@ -36,31 +36,28 @@ const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 // defines a route that receives the request to /
 app.get('/', (req, res) => {
-    // make a request to the backend microservice using the request package
-    // the URL for the backend service should be set in configuration 
-    // using an environment variable. Here, the variable is passed 
+    // make a request to the backend microservice using the axios package
+    // the URL for the backend service should be set in configuration
+    // using an environment variable. Here, the variable is passed
     // to npm start inside package.json:
     //  "start": "SERVER=http://localhost:8082 node server.js",
-    request.get(  // first argument: url + return format
-        {
-            url: process.env.SERVER + '/events',  // the microservice end point for events
-            json: true  // response from server will be json format
-        }, // second argument: function with three args,
-        // runs when server response received
-        // body hold the return from the server
-        (error, response, body) => {
-            console.log('error:', error); // Print the error if one occurred
-            console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-            console.log(body); // print the return from the server microservice
+    axios.get(process.env.SERVER + '/events')
+        .then(response => {
+            console.log('statusCode:', response.status);
+            console.log(response.data);
             res.render('home',
                 {
                     layout: 'default',  //the outer html page
-                    template: 'index-template', // the partial view inserted into 
+                    template: 'index-template', // the partial view inserted into
                     // {{body}} in the layout - the code
                     // in here inserts values from the JSON
                     // received from the server
-                    events: body.events
+                    events: response.data.events
                 }); // pass the data from the server to the template
+        })
+        .catch(error => {
+            console.log('error:', error.message);
+            res.status(500).json({ message: error.message });
         });
 
 });
@@ -71,35 +68,36 @@ app.post('/event',
     urlencodedParser, // second argument - how to parse the uploaded content
     // into req.body
     (req, res) => {
-        // make a request to the backend microservice using the request package
-        // the URL for the backend service should be set in configuration 
-        // using an environment variable. Here, the variable is passed 
+        // make a request to the backend microservice using the axios package
+        // the URL for the backend service should be set in configuration
+        // using an environment variable. Here, the variable is passed
         // to npm start inside package.json:
         //  "start": "SERVER=http://localhost:8082 node server.js",
-        request.post(  // first argument: url + data + formats
+        axios.post(
+            process.env.SERVER + '/event',  // the microservice end point for adding an event
+            req.body,  // content of the form
             {
-                url: process.env.SERVER + '/event',  // the microservice end point for adding an event
-                body: req.body,  // content of the form
                 headers: { // uploading json
-                    "Content-Type": "application/json"
-                },
-                json: true // response from server will be json format
-            },
-            (error, response, body) => {  // third argument: function with three args,
-                // runs when server response received
-                // body hold the return from the server
-                console.log('error:', error); // Print the error if one occurred
-                console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-                console.log(body); // print the return from the server microservice
+                    'Content-Type': 'application/json'
+                }
+            }
+        )
+            .then(response => {
+                console.log('statusCode:', response.status);
+                console.log(response.data);
                 res.render('home',
                     {
                         layout: 'default',  //the outer html page
-                        template: 'index-template', // the partial view inserted into 
+                        template: 'index-template', // the partial view inserted into
                         // {{body}} in the layout - the code
                         // in here inserts values from the JSON
                         // received from the server
-                        events: body.events
+                        events: response.data.events
                     }); // pass the data from the server to the template
+            })
+            .catch(error => {
+                console.log('error:', error.message);
+                res.status(500).json({ message: error.message });
             });
 
     });
